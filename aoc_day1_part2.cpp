@@ -208,18 +208,18 @@ std::vector<int> values = {
 int find_number_for_sum(
 	const int number_count,
 	const int running_total,
-	const int max_numbers = 2,
+	const int max_additional_numbers = 2,
 	const int target_total = 2020
 )
 {
 	const auto remainder = target_total - running_total;
-	std::vector<int>::iterator value = values.end();
+	auto value = values.crbegin();
 
-	while (remainder >= *(--value))
+	while (remainder >= *value)
 	{
 		const auto current_total = running_total + *value;
 
-		if (number_count < max_numbers && current_total < target_total)
+		if (number_count < max_additional_numbers && current_total < target_total)
 		{
 			const auto result = find_number_for_sum(number_count + 1, current_total);
 
@@ -229,12 +229,14 @@ int find_number_for_sum(
 				return *value * result;
 			}
 		}
-		else if (number_count == max_numbers && current_total == target_total)
+		else if (number_count == max_additional_numbers && current_total == target_total)
 		{
 			std::cout << "huzzah! " << target_total << " found using:" << std::endl;
 			std::cout << *value << std::endl;
 			return *value;
 		}
+
+		++value;
 	}
 
 	return 0;

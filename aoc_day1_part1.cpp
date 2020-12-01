@@ -209,19 +209,21 @@ int main(int argc, char const *argv[])
 {
 	std::sort(values.begin(), values.end(), std::greater<int>());
 
-	for (const auto & value : values)
+	for (const auto & value1 : values)
 	{
-		const auto remainder = 2020 - value;
-		std::vector<int>::iterator it = values.end();
+		const auto remainder = 2020 - value1;
+		auto value2 = values.crbegin();
 
-		while (remainder >= *(--it))
+		while (remainder >= *value2)
 		{
-			if (value + *it == 2020)
+			if (value1 + *value2 == 2020)
 			{
-				std::cout << "huzzah! " << value << " + " << *it << " = 2020" << std::endl;
-				std::cout << "answer = " << value * *it << std::endl;
+				std::cout << "huzzah! " << value1 << " + " << *value2 << " = 2020" << std::endl;
+				std::cout << "answer = " << value1 * *value2 << std::endl;
 				return 0;
 			}
+
+			++value2;
 		}
 	}
 
