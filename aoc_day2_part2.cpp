@@ -1012,28 +1012,31 @@ int main(int argc, char const *argv[])
 
 	for (const auto & rule_and_password : rules_and_passwords)
 	{
-		int min, max;
+		int pos1, pos2;
 		char letter;
 		char password[50];
 
-		sscanf(rule_and_password.c_str(), "%d-%d %c: %s\n", &min, &max, &letter, password);
+		sscanf(rule_and_password.c_str(), "%d-%d %c: %s\n", &pos1, &pos2, &letter, password);
 
 		std::cout
-			<< " min: " << min
-			<< " max: " << max
+			<< " pos1: " << pos1
+			<< " pos2: " << pos2
 			<< " letter: " << letter
 			<< " password: " << password
 			<< std::endl;
 
 		int expected_letter_count = 0;
+		int current_position = 0;
 
-		for (const char & l : std::string(password))
+		while (password[current_position])
 		{
-			if (l == letter)
+			if (password[current_position] == letter && (current_position == pos1 - 1 || current_position == pos2 -1))
 				++expected_letter_count;
+
+			++current_position;
 		}
 
-		if (expected_letter_count >= min && expected_letter_count <= max)
+		if (expected_letter_count == 1)
 			++valid_password_count;
 	}
 
