@@ -10,6 +10,8 @@
 
 namespace
 {
+	const std::set<std::string> accepted_eye_colours {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
+
 	bool string_year_between(const std::string & value, const int min, const int max)
 	{
 		if (value.size() != 4)
@@ -83,8 +85,6 @@ namespace
 
 	bool validate_ecl_field_data(const std::string & value)
 	{
-		std::set<std::string> accepted_eye_colours {"amb", "blu", "brn", "gry", "grn", "hzl", "oth"};
-
 		return accepted_eye_colours.contains(value);
 	}
 
