@@ -53,7 +53,7 @@ int process_boardingpass(const std::string & boardingpass)
 	return (min_row * 8) + min_col;
 }
 
-int process_boardingpass_binary(const std::string & boardingpass)
+int process_boardingpass_bitwise(const std::string & boardingpass)
 {
 	int row = 0;
 
@@ -89,7 +89,7 @@ int main(int argc, char const *argv[])
 	while (std::getline(filestream, boardingpass))
 	{
 		int seat_id = process_boardingpass(boardingpass);
-		int seat_id2 = process_boardingpass_binary(boardingpass);
+		int seat_id2 = process_boardingpass_bitwise(boardingpass);
 
 		std::cout << seat_id << " " << seat_id2 << std::endl;
 
