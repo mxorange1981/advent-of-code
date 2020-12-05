@@ -53,6 +53,31 @@ int process_boardingpass(const std::string & boardingpass)
 	return (min_row * 8) + min_col;
 }
 
+int process_boardingpass_binary(const std::string & boardingpass)
+{
+	int row = 0;
+
+	for (int r = 0; r < 7; ++r)
+	{
+		row <<= 1;
+
+		if (boardingpass[r] == 'B')
+			row |= 1;
+	}
+
+	int seat = 0;
+
+	for (int c = 7; c < 10; ++c)
+	{
+		seat <<= 1;
+
+		if (boardingpass[c] == 'R')
+			seat |= 1;
+	}
+
+	return (row << 3) | seat;
+}
+
 int main(int argc, char const *argv[])
 {
 	std::ifstream filestream("aoc_day5_input.txt");
@@ -63,7 +88,12 @@ int main(int argc, char const *argv[])
 
 	while (std::getline(filestream, boardingpass))
 	{
-		allocated_seats.insert(process_boardingpass(boardingpass));
+		int seat_id = process_boardingpass(boardingpass);
+		int seat_id2 = process_boardingpass_binary(boardingpass);
+
+		std::cout << seat_id << " " << seat_id2 << std::endl;
+
+		allocated_seats.insert(seat_id);
 	}
 
 	for (int seat = *allocated_seats.begin(); seat < *allocated_seats.end(); ++seat)
