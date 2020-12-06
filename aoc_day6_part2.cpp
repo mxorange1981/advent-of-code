@@ -4,14 +4,12 @@
 #include <sstream>
 #include <vector>
 
-const std::string possible_answers = "abcdefghijklmnopqrstuvwxyz";
-
-struct groups_answers_t
+struct group_answers_t
 {
 	std::multiset<char> answers;
 	int number_in_group;
 
-	groups_answers_t()
+	group_answers_t()
 	{
 		init();
 	}
@@ -30,8 +28,8 @@ int main(int argc, char const *argv[])
 	std::string line;
 	char answer;
 
-	groups_answers_t temp_group_answers;
-	std::vector<groups_answers_t> groups_answers;
+	group_answers_t temp_group_answers;
+	std::vector<group_answers_t> groups_answers;
 
 	while (std::getline(filestream, line))
 	{
@@ -60,9 +58,14 @@ int main(int argc, char const *argv[])
 
 	for (const auto & group_answers : groups_answers)
 	{
-		for (const auto & possible_answer : possible_answers)
+		for (
+			auto each = group_answers.answers.begin();
+			each != group_answers.answers.end();
+			each = group_answers.answers.upper_bound(*each)
+		)
 		{
-			total_answers += group_answers.answers.count(possible_answer) == group_answers.number_in_group ? 1 : 0;
+			total_answers +=
+				group_answers.answers.count(*each) == group_answers.number_in_group ? 1 : 0;
 		}
 	}
 
