@@ -104,7 +104,7 @@ int main(int argc, char const *argv[])
 	{
 		if (vm.front().p_ip.contains(vm.front().ip))
 		{
-			std::cout << "INFINTATE LOOP DETECTED!!!" << std::endl;
+			std::cout << "INFINATE LOOP DETECTED!!!" << std::endl;
 
 			ild_flag = true;
 			foc_flag = true;
