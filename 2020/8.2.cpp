@@ -1,11 +1,25 @@
+#include <deque>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <set>
 #include <sstream>
 #include <vector>
 
 namespace
 {
+	struct vm_state_t
+	{
+		int ip;
+		int a;
+
+		std::set<int> p_ip;
+
+		vm_state_t() :
+			ip(0), a(0)
+		{}
+	};
+
 	enum class opcodes
 	{
 		acc,
@@ -44,7 +58,10 @@ namespace
 	{
 		opcodes opcode;
 		int arg;
-		bool called;
+
+		instruction_t() :
+			opcode(opcodes::nop), arg(0)
+		{}
 	};
 
 	std::istream& operator>>(std::istream& is, instruction_t& i)
@@ -60,35 +77,6 @@ namespace
 		os << i.opcode << " " << i.arg;
 
 		return os;
-	}
-
-	bool run_bootcode(std::vector<instruction_t> bootcode)
-	{
-		int a = 0;
-		int ip = 0;
-
-		while(ip < bootcode.size() && !bootcode[ip].called)
-		{
-			std::cout << "ex: " << ip << " " << bootcode[ip];
-
-			bootcode[ip].called = true;
-
-			switch (bootcode[ip].opcode)
-			{
-			case opcodes::acc:
-				a += bootcode[ip].arg;
-			case opcodes::nop:
-				++ip;
-				break;
-			case opcodes::jmp:
-				ip += bootcode[ip].arg;
-				break;
-			};
-
-			std::cout << " a: " << a << " ip: " << ip << std::endl;
-		}
-
-		return bootcode[ip].called;
 	}
 }
 
@@ -106,32 +94,70 @@ int main(int argc, char const *argv[])
 		bootcode.push_back(tmp);
 	}
 
-	int rip = bootcode.size() - 1;
-	std::vector<instruction_t> modified_bootcode;
+	std::deque<vm_state_t> vm;
+	vm.emplace_front();
 
-	do
+	int ild_flag = false;
+	int foc_flag = false;
+
+	while(vm.front().ip < bootcode.size())
 	{
-		modified_bootcode = bootcode;
+		if (vm.front().p_ip.contains(vm.front().ip))
+		{
+			std::cout << "INFINTATE LOOP DETECTED!!!" << std::endl;
 
-		std::cout << "running brute force loop: " << rip << " " << modified_bootcode[rip] << " > ";
+			ild_flag = true;
+			foc_flag = true;
 
-		switch (modified_bootcode[rip].opcode)
+			vm.pop_front();
+		}
+
+		std::cout << "ex: " << vm.front().ip << " " << bootcode[vm.front().ip];
+
+		vm.front().p_ip.insert(vm.front().ip);
+
+		switch (bootcode[vm.front().ip].opcode)
 		{
 		case opcodes::acc:
+			{
+				vm.front().a += bootcode[vm.front().ip].arg;
+				++vm.front().ip;
+			}
 			break;
 		case opcodes::nop:
-			modified_bootcode[rip].opcode = opcodes::jmp;
+			{
+				if (!ild_flag)
+					vm.push_front(vm.front());
+
+				if(!foc_flag)
+					++vm.front().ip;
+
+				if(foc_flag)
+				{
+					vm.front().ip += bootcode[vm.front().ip].arg;
+					foc_flag = false;
+				}
+			}
 			break;
 		case opcodes::jmp:
-			modified_bootcode[rip].opcode = opcodes::nop;
+			{
+				if (!ild_flag)
+					vm.push_front(vm.front());
+
+				if(!foc_flag)
+					vm.front().ip += bootcode[vm.front().ip].arg;
+
+				if(foc_flag)
+				{
+					++vm.front().ip;
+					foc_flag = false;
+				}
+			}
 			break;
 		};
 
-		std::cout << modified_bootcode[rip] << std::endl;
-
-		--rip;
+		std::cout << " a: " << vm.front().a << " ip: " << vm.front().ip << std::endl;
 	}
-	while(run_bootcode(modified_bootcode));
 
 	return 0;
 }
