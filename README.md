@@ -1,5 +1,6 @@
-# AOC 2020
+# Advent of Code
 
-To compile these programs use
+### AoC 2020
 
-c++ --std=c++2a source_file.cpp
+The solutions are written in C++ 20 so the following command should be used to compile them
+`c++ --std=c++2a source_file.cpp`
