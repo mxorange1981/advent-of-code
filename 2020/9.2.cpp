@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -32,10 +33,13 @@ int main(int argc, char const *argv[])
 
 			if (total == target)
 			{
-				std::vector<int> results(it, nit + 1);
-				std::sort(results.begin(), results.end());
+				// inc so it can be used as the end point.
+				++nit;
 
-				std::cout << "answer = " << results.front() + results.back() << std::endl;
+				std::cout
+					<< "answer = "
+					<< *std::min_element(it, nit) + *std::max_element(it, nit)
+					<< std::endl;
 
 				return 0;
 			}
