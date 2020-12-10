@@ -22,12 +22,12 @@ int main(int argc, char const *argv[])
 	{
 		for (int i = 1; i < 4; ++i)
 		{
-			if (adapters.find(a.first + i) != adapters.end())
+			if (adapters.contains(a.first + i))
 				adapters[a.first + i] += a.second;
 		}
-
-		std::cout << "a:" << a.first << " p: " << a.second << std::endl;
 	}
+
+	std::cout << adapters.rbegin()->second << std::endl;
 
 	return 0;
 }
