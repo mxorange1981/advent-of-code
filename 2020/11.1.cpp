@@ -109,11 +109,7 @@ int main(int argc, char const *argv[])
 		print_seating_plan(next);
 	}
 
-	int occupied_seats = 0;
-	for (const auto & s : next)
-		if (s == '#')
-			++occupied_seats;
-	std::cout << "occupied_seats = " << occupied_seats << std::endl;
+	std::cout << "occupied_seats = " << std::count(next.begin(), next.end(), '#') << std::endl;
 
 	return 0;
 }
