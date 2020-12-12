@@ -78,6 +78,8 @@ int main(int argc, char const *argv[])
 				value = (((value / 360) + 1) * 360) - value;
 		case actions_t::R:
 			{
+				value = abs((((value / 360)) * 360) - value);
+
 				int temp;
 
 				if (value == 90)
