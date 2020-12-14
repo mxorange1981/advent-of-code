@@ -1,55 +1,55 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
-#include <map>
 #include <sstream>
+#include <vector>
 
 int main(int argc, char const *argv[])
 {
-	std::ifstream filestream("13.test.txt");
+	std::ifstream filestream("13.txt");
 
 	filestream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-	std::map<long, long> ids;
+	std::vector<long> ids;
 	{
 		std::string id;
-		int p = -1;
 		while (std::getline(filestream, id, ','))
 		{
-			std::cout << " " << id;
-			++p;
-			if (id != "x")
-				ids.insert({std::stoi(id), p});
+			if (id == "x")
+				ids.push_back(1);
+			else
+				ids.push_back(std::stoi(id));
 		}
 	}
 
-	long convergence = 1;
-	for (const auto id : ids)
-		convergence *= id.first;
+	long max_t = 1;
+	for (const auto & id : ids)
+		max_t *= id;
 
-	long b = ids.rbegin()->first;
-	long p = ids.rbegin()->second;
-
-	ids.erase(b);
-
-	std::cout
-		<< " convergence " << convergence
-		<< " b " << b
-		<< " p " << p
-		<< std::endl;
+	const long filter1 = (37 * 401);
+	const long filter2 = (17 * 571);
 
 	bool found = false;
-	for (long y = 0; y < (convergence / b); ++y)
+	for (long m = 0; m < max_t / filter1; ++m)
 	{
+		const long t = (filter1 * m) - 48;
+
+		if (((t + 17) % filter2) != 0)
+			continue;
+
 		found = true;
 
-		const long t = b * y;
 		for (auto it = ids.begin(); it != ids.end() && found; ++it)
-			found &= ((t + (it->second - p)) % it->first == 0);
+		{
+			if (*it == 1)
+				continue;
+
+			found &= ((t + (it - ids.begin())) % *it == 0);
+		}
 
 		if (found)
 		{
-			std::cout << " t: " << ((b * y) - p)  << std::endl;
+			std::cout << " t: " << t << std::endl;
 			break;
 		}
 	}
