@@ -12,8 +12,9 @@ int main(int argc, char const *argv[])
 
 	std::map<long, long> mem;
 	{
+		std::vector<int> fps;
 		std::string mask;
-		std::vector<int> floating_positions;
+
 		std::string line;
 		while (std::getline(filestream, line))
 		{
@@ -25,28 +26,21 @@ int main(int argc, char const *argv[])
 			if (type == "mask")
 			{
 				mask = value;
-				floating_positions.clear();
+				fps.clear();
 
-				for (int i = mask.size() - 1; i > -1 ; --i)
+				for (auto it = mask.rbegin(); it != mask.rend(); ++it)
 				{
-					if (mask[i] == 'X')
-						floating_positions.push_back(mask.size() - i - 1);
+					if (*it == 'X')
+						fps.push_back(it - mask.rbegin());
 				}
-
-				std::cout << "using mask: " << mask << " floating_positions:";
-
-				for (int i = 0; i < floating_positions.size(); ++i)
-					std::cout << " " << floating_positions[i];
-
-				std::cout << std::endl;
 			}
 			else if (type.substr(0, 3) == "mem")
 			{
 				const long in_address = std::stoi(type.substr(4, type.find("]") - 4));
-				const long in = std::stoi(value);
+				const long in_value = std::stoi(value);
 
-				long maskbit = 1L << 35;
 				long base_address = 0;
+				long maskbit = 1L << 35;
 
 				for (const auto & m : mask)
 				{
@@ -62,41 +56,23 @@ int main(int argc, char const *argv[])
 					maskbit >>= 1;
 				}
 
-				std::cout
-					<< "in_address " << in_address
-					<< " base_address " << base_address
-					<< " in " << in
-					<< std::endl;
-
-				for (int o = 0; o < std::pow(2, floating_positions.size()); ++o)
+				for (long i = 0; i < std::pow(2, fps.size()); ++i)
 				{
 					long offset = 0;
 
-					int floating_position = floating_positions.size() - 1;
-					maskbit = 1L << floating_position;
-
-					std::cout
-						<< "floating_position " << floating_position
-						<< " maskbit " << maskbit
-						<< std::endl;
+					long fp = fps.size() - 1;
+					maskbit = 1L << fp;
 
 					while (maskbit)
 					{
-						if (o & maskbit)
-						{
-							offset += std::pow(2, floating_positions[floating_position]);
-						}
+						if (i & maskbit)
+							offset += std::pow(2, fps[fp]);
 
-						--floating_position;
+						--fp;
 						maskbit >>= 1;
 					}
 
-					std::cout
-						<< "offset " << offset
-						<< " base_address * offset " << (base_address + offset)
-						<< std::endl;
-
-					mem[base_address + offset] = in;
+					mem[base_address + offset] = in_value;
 				}
 			}
 			else
