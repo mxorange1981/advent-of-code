@@ -4,7 +4,6 @@
 #include <map>
 #include <sstream>
 #include <string>
-#include <vector>
 
 int main(int argc, char const *argv[])
 {
@@ -12,7 +11,7 @@ int main(int argc, char const *argv[])
 
 	std::map<long, long> mem;
 	{
-		std::vector<int> fps;
+		std::map<long, long> fps;
 		std::string mask;
 
 		std::string line;
@@ -31,7 +30,7 @@ int main(int argc, char const *argv[])
 				for (auto it = mask.rbegin(); it != mask.rend(); ++it)
 				{
 					if (*it == 'X')
-						fps.push_back(it - mask.rbegin());
+						fps.insert({std::pow(2, fps.size()), (it - mask.rbegin())});
 				}
 			}
 			else if (type.substr(0, 3) == "mem")
@@ -60,15 +59,13 @@ int main(int argc, char const *argv[])
 				{
 					long offset = 0;
 
-					long fp = fps.size() - 1;
-					maskbit = 1L << fp;
+					maskbit = 1L << fps.size() - 1;
 
 					while (maskbit)
 					{
 						if (i & maskbit)
-							offset += std::pow(2, fps[fp]);
+							offset += std::pow(2, fps.at(maskbit));
 
-						--fp;
 						maskbit >>= 1;
 					}
 
