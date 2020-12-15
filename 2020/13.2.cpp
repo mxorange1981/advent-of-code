@@ -26,7 +26,7 @@ int main(int argc, char const *argv[])
 	for (const auto & id : ids)
 		max_t *= id;
 
-	const long filter1 = (37 * 401);
+	const long filter1 = (13 * 37 * 401);
 	const long filter2 = (17 * 571);
 
 	bool found = false;
