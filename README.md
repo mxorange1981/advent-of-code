@@ -1,7 +1,5 @@
 # Advent of Code
 
-## AoC
-
 These are my good, bad, and ugly solutions to the Advent of Code.  Enjoy! :)
 
 ### AoC 2020
